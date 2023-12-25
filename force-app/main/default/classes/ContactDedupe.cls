@@ -45,8 +45,11 @@ global class ContactDedupe implements Database.Batchable<sObject> {
         }
     }
     public Contact mergeContactRecordFields(List<Contact> duplicateContacts, Contact winningRecord){
-        for (Contact con : duplicateContacts) {
-            winningRecord.put('Phone', con.Phone);
+       List<String> customSettingsValues= getValuesFromCustomSettings();
+        for (Contact duplicateContactRecord : duplicateContacts) {
+            for(String fieldName :customSettingsValues){
+                winningRecord.put(fieldName,duplicateContactRecord.get(fieldName));
+            }
         }
         return winningRecord;
     }
@@ -69,6 +72,10 @@ global class ContactDedupe implements Database.Batchable<sObject> {
     }
     public void finish(Database.BatchableContext bc){
         
+    }
+    public List<String> getValuesFromCustomSettings(){
+        Dedupe_Settings__c dedupeSettings = Dedupe_Settings__c.getValues(UserInfo.getProfileId());
+        return dedupeSettings.Value__c.split(',');
     }
     
     public Contact getWinningRecord(List<Contact> contacts){
