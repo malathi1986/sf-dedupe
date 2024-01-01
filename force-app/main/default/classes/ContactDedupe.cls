@@ -82,8 +82,7 @@ global class ContactDedupe implements Database.Batchable<sObject> {
         for(Contact con:contacts){
             if(con.RecordType.Name=='Primary'){
                 System.debug('RecordType:=====> ' + con);
-                return con;
-                
+                return con;    
             }
         }
         return null;
